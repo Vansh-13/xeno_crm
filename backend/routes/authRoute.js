@@ -1,17 +1,16 @@
+// routes/authRoute.js
 import express from "express";
 import passport from "passport";
+
 const router = express.Router();
 
-router.get(
-  "/user",
-  (req, res) => {
-    if (req.isAuthenticated()) {
-      res.json(req.user);
-    } else {
-      res.status(401).json({ message: "Not authenticated" });
-    }
+router.get("/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+  } else {
+    res.status(401).json({ message: "Not authenticated" });
   }
-);
+});
 
 router.get(
   "/google",
