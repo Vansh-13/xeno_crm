@@ -17,7 +17,8 @@ import User from "../models/User.js";
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: "/auth/google/callback",
+callbackURL: "https://xeno-crm-backend-rky0.onrender.com/auth/google/callback",
+
 },
 async (accessToken, refreshToken, profile, done) => {
   try {
