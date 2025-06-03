@@ -59,11 +59,23 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+// API Routes
 app.use('/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/campaigns', campaignRoutes);
+
+// ---- React build static files serve ----
+// Make sure to run `npm run build` in your React frontend to generate this folder
+const reactBuildPath = path.join(__dirname, 'client/dist'); // <-- adjust if your build folder path is different
+
+// Serve React static files
+app.use(express.static(reactBuildPath));
+
+// For any other route, serve React's index.html (for React Router to handle routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(reactBuildPath, 'index.html'));
+});
 
 // Start the server
 const port = process.env.PORT || 3000;
