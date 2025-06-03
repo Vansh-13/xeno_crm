@@ -11,11 +11,11 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Convert ES module path
+// Convert ES module path for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env file
+// Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Connect to MongoDB
@@ -24,12 +24,13 @@ connectdb();
 // Initialize Express app
 const app = express();
 
-// ✅ CORS Configuration for both local and production
+// Allowed origins for CORS (update with your frontend URLs)
 const allowedOrigins = [
   "http://localhost:5173",
   "https://xeno-crm-frontendd.onrender.com"
 ];
 
+// CORS setup to allow frontend origins and credentials
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -41,38 +42,36 @@ app.use(cors({
   credentials: true,
 }));
 
-// Middleware to parse JSON
+// Parse JSON bodies
 app.use(express.json());
 
-// Session setup
+// Session setup (make sure COOKIE_KEY is set in your .env file)
 app.use(session({
-  secret: process.env.COOKIE_KEY, // ✅ Make sure COOKIE_KEY is set in .env
+  secret: process.env.COOKIE_KEY,
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: false, // Set to true if using HTTPS and proxy (e.g., with Render)
+    secure: false, // set true if using HTTPS and proxy (like Render)
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   }
 }));
 
-// Passport setup
+// Initialize Passport for authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
-// API Routes
+// API routes
 app.use('/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/campaigns', campaignRoutes);
 
-// ---- React build static files serve ----
-// Make sure to run `npm run build` in your React frontend to generate this folder
-const reactBuildPath = path.join(__dirname, 'client/dist'); // <-- adjust if your build folder path is different
+// Serve React static files from the build folder
+const reactBuildPath = path.join(__dirname, 'client/dist'); // <-- React build output path
 
-// Serve React static files
 app.use(express.static(reactBuildPath));
 
-// For any other route, serve React's index.html (for React Router to handle routing)
+// For any other route, serve React's index.html (for React Router)
 app.get('*', (req, res) => {
   res.sendFile(path.join(reactBuildPath, 'index.html'));
 });
