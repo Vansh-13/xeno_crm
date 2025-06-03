@@ -5,20 +5,20 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// in this is use the type=module so in this first i have cinvert url to the file name so that path.join is work in this
-
-dotenv.config({ path: path.join(__dirname, "../.env") }); 
-// Make sure path sahi hai — agar aapka .env root folder mein hai toh ../.env sahi hai
+// Load environment variables from the .env file
+dotenv.config({ path: path.join(__dirname, "../.env") });
 
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User.js";
 
+// Use environment variable for callback URL
+const callbackURL =  "http://localhost:5002/auth/google/callback";
+
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-callbackURL: "https://xeno-crm-backend-rky0.onrender.com/auth/google/callback",
-
+  callbackURL: callbackURL,
 },
 async (accessToken, refreshToken, profile, done) => {
   try {
