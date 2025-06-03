@@ -2,8 +2,8 @@ import React from 'react';
 
 function Login() {
   const handleLogin = () => {
-    window.location.assign("http://localhost:5002/auth/google");
-  };
+  window.location.assign("https://xeno-crm-backend-rky0.onrender.com/auth/google"); // ✅ hardcoded
+};
 
   return (
     <>
