@@ -50,7 +50,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: false, // Set to true if using HTTPS and proxy (e.g., with Render)
+    secure: false, // Set true if HTTPS + proxy
     maxAge: 24 * 60 * 60 * 1000 // 1 day
   }
 }));
@@ -59,11 +59,20 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+// API routes
 app.use('/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/campaigns', campaignRoutes);
+
+// Serve React static files **before** the catch-all
+const reactBuildPath = path.join(__dirname, 'client/dist');
+app.use(express.static(reactBuildPath));
+
+// Catch-all to serve index.html for React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(reactBuildPath, 'index.html'));
+});
 
 // Start the server
 const port = process.env.PORT || 3000;
